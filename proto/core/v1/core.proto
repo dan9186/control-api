@@ -7,7 +7,7 @@ import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 import "validate/validate.proto";
 
-option go_package = "api/core/v1;corepb";
+option go_package = "github.com/dan9186/control-api/api/core/v1;corepb";
 
 
 service CoreService {
