@@ -224,7 +224,24 @@ func (m *Listener) Validate() error {
 		}
 	}
 
-	// no validation rules for Regex
+	switch m.Match.(type) {
+
+	case *Listener_Triggers:
+
+		if v, ok := interface{}(m.GetTriggers()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListenerValidationError{
+					field:  "Triggers",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	case *Listener_TriggerRegex:
+		// no validation rules for TriggerRegex
+
+	}
 
 	return nil
 }
@@ -283,6 +300,70 @@ var _ interface {
 	ErrorName() string
 } = ListenerValidationError{}
 
+// Validate checks the field values on Triggers with the rules defined in the
+// proto definition for this message. If any rules are violated, an error is returned.
+func (m *Triggers) Validate() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+// TriggersValidationError is the validation error returned by
+// Triggers.Validate if the designated constraints aren't met.
+type TriggersValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e TriggersValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e TriggersValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e TriggersValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e TriggersValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e TriggersValidationError) ErrorName() string { return "TriggersValidationError" }
+
+// Error satisfies the builtin error interface
+func (e TriggersValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sTriggers.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = TriggersValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = TriggersValidationError{}
+
 // Validate checks the field values on EventMessage with the rules defined in
 // the proto definition for this message. If any rules are violated, an error
 // is returned.
@@ -291,7 +372,33 @@ func (m *EventMessage) Validate() error {
 		return nil
 	}
 
-	// no validation rules for Body
+	switch m.EventType.(type) {
+
+	case *EventMessage_Event:
+
+		if v, ok := interface{}(m.GetEvent()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return EventMessageValidationError{
+					field:  "Event",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	case *EventMessage_Response:
+
+		if v, ok := interface{}(m.GetResponse()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return EventMessageValidationError{
+					field:  "Response",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
 
 	return nil
 }
@@ -349,3 +456,172 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = EventMessageValidationError{}
+
+// Validate checks the field values on EventResponse with the rules defined in
+// the proto definition for this message. If any rules are violated, an error
+// is returned.
+func (m *EventResponse) Validate() error {
+	if m == nil {
+		return nil
+	}
+
+	if err := m._validateUuid(m.GetResponseId()); err != nil {
+		return EventResponseValidationError{
+			field:  "ResponseId",
+			reason: "value must be a valid UUID",
+			cause:  err,
+		}
+	}
+
+	if v, ok := interface{}(m.GetEvent()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return EventResponseValidationError{
+				field:  "Event",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *EventResponse) _validateUuid(uuid string) error {
+	if matched := _core_uuidPattern.MatchString(uuid); !matched {
+		return errors.New("invalid uuid format")
+	}
+
+	return nil
+}
+
+// EventResponseValidationError is the validation error returned by
+// EventResponse.Validate if the designated constraints aren't met.
+type EventResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e EventResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e EventResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e EventResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e EventResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e EventResponseValidationError) ErrorName() string { return "EventResponseValidationError" }
+
+// Error satisfies the builtin error interface
+func (e EventResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sEventResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = EventResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = EventResponseValidationError{}
+
+// Validate checks the field values on Event with the rules defined in the
+// proto definition for this message. If any rules are violated, an error is returned.
+func (m *Event) Validate() error {
+	if m == nil {
+		return nil
+	}
+
+	// no validation rules for Headers
+
+	// no validation rules for Body
+
+	if v, ok := interface{}(m.GetCreated()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return EventValidationError{
+				field:  "Created",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	return nil
+}
+
+// EventValidationError is the validation error returned by Event.Validate if
+// the designated constraints aren't met.
+type EventValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e EventValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e EventValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e EventValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e EventValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e EventValidationError) ErrorName() string { return "EventValidationError" }
+
+// Error satisfies the builtin error interface
+func (e EventValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sEvent.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = EventValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = EventValidationError{}
