@@ -27,6 +27,7 @@ proto: ## Build the protobufs
 		-I ./proto \
 		-I $(GOPATH)/src/github.com/envoyproxy/protoc-gen-validate \
 		-I $(GOPATH)/src/github.com/googleapis/googleapis \
+		-I $(GOPATH)/src/github.com/protocolbuffers/protobuf/src \
 		--go_out="." \
 		--go-grpc_out="." \
 		--validate_out="lang=go:." \
