@@ -3,6 +3,7 @@ syntax = "proto3";
 package control.core.v1;
 
 import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
 import "validate/validate.proto";
 
 option go_package = "api/core/v1;corepb";
@@ -12,6 +13,13 @@ service CoreService {
   rpc Subscribe(SubscribeRequest) returns (SubscribeResponse) {
     option (google.api.http) = {
       post: "/core/v1/subscribe"
+      body: "*"
+    };
+  }
+
+  rpc EventTopic(EventMessage) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/core/v1/event"
       body: "*"
     };
   }
@@ -32,4 +40,8 @@ message SubscribeResponse {
 message Listener {
   repeated string targets = 1;
   string regex = 2;
+}
+
+message EventMessage {
+  bytes body = 1;
 }
