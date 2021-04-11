@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package control.module.v1;
+
+import "core/v1/core.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+option go_package = "api/module/v1;modulepb";
+
+
+service ModuleService {
+  rpc EventTopic(control.core.v1.EventMessage) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/module/v1/event"
+      body: "*"
+    };
+  }
+}
