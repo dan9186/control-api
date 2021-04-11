@@ -3,8 +3,8 @@
 package modulepb
 
 import (
-	v1 "api/core/v1"
 	context "context"
+	v1 "github.com/dan9186/control-api/api/core/v1"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
