@@ -16,4 +16,17 @@ service ModuleService {
       body: "*"
     };
   }
+
+  rpc Shutdown(ShutdownRequest) returns (ShutdownResponse) {
+    option (google.api.http) = {
+      post: "/module/v1/shutdown"
+      body: "*"
+    };
+  }
+}
+
+message ShutdownRequest {
+}
+
+message ShutdownResponse {
 }
