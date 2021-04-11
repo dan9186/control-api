@@ -20,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion6
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ModuleServiceClient interface {
 	EventTopic(ctx context.Context, in *v1.EventMessage, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	Shutdown(ctx context.Context, in *ShutdownRequest, opts ...grpc.CallOption) (*ShutdownResponse, error)
 }
 
 type moduleServiceClient struct {
@@ -39,11 +40,21 @@ func (c *moduleServiceClient) EventTopic(ctx context.Context, in *v1.EventMessag
 	return out, nil
 }
 
+func (c *moduleServiceClient) Shutdown(ctx context.Context, in *ShutdownRequest, opts ...grpc.CallOption) (*ShutdownResponse, error) {
+	out := new(ShutdownResponse)
+	err := c.cc.Invoke(ctx, "/control.module.v1.ModuleService/Shutdown", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ModuleServiceServer is the server API for ModuleService service.
 // All implementations must embed UnimplementedModuleServiceServer
 // for forward compatibility
 type ModuleServiceServer interface {
 	EventTopic(context.Context, *v1.EventMessage) (*emptypb.Empty, error)
+	Shutdown(context.Context, *ShutdownRequest) (*ShutdownResponse, error)
 	mustEmbedUnimplementedModuleServiceServer()
 }
 
@@ -53,6 +64,9 @@ type UnimplementedModuleServiceServer struct {
 
 func (*UnimplementedModuleServiceServer) EventTopic(context.Context, *v1.EventMessage) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EventTopic not implemented")
+}
+func (*UnimplementedModuleServiceServer) Shutdown(context.Context, *ShutdownRequest) (*ShutdownResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Shutdown not implemented")
 }
 func (*UnimplementedModuleServiceServer) mustEmbedUnimplementedModuleServiceServer() {}
 
@@ -78,6 +92,24 @@ func _ModuleService_EventTopic_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ModuleService_Shutdown_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ShutdownRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ModuleServiceServer).Shutdown(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/control.module.v1.ModuleService/Shutdown",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ModuleServiceServer).Shutdown(ctx, req.(*ShutdownRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _ModuleService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "control.module.v1.ModuleService",
 	HandlerType: (*ModuleServiceServer)(nil),
@@ -85,6 +117,10 @@ var _ModuleService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "EventTopic",
 			Handler:    _ModuleService_EventTopic_Handler,
+		},
+		{
+			MethodName: "Shutdown",
+			Handler:    _ModuleService_Shutdown_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
