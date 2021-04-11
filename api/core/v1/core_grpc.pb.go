@@ -7,6 +7,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -18,6 +19,7 @@ const _ = grpc.SupportPackageIsVersion6
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CoreServiceClient interface {
 	Subscribe(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (*SubscribeResponse, error)
+	EventTopic(ctx context.Context, in *EventMessage, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type coreServiceClient struct {
@@ -37,11 +39,21 @@ func (c *coreServiceClient) Subscribe(ctx context.Context, in *SubscribeRequest,
 	return out, nil
 }
 
+func (c *coreServiceClient) EventTopic(ctx context.Context, in *EventMessage, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/control.core.v1.CoreService/EventTopic", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CoreServiceServer is the server API for CoreService service.
 // All implementations must embed UnimplementedCoreServiceServer
 // for forward compatibility
 type CoreServiceServer interface {
 	Subscribe(context.Context, *SubscribeRequest) (*SubscribeResponse, error)
+	EventTopic(context.Context, *EventMessage) (*emptypb.Empty, error)
 	mustEmbedUnimplementedCoreServiceServer()
 }
 
@@ -51,6 +63,9 @@ type UnimplementedCoreServiceServer struct {
 
 func (*UnimplementedCoreServiceServer) Subscribe(context.Context, *SubscribeRequest) (*SubscribeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Subscribe not implemented")
+}
+func (*UnimplementedCoreServiceServer) EventTopic(context.Context, *EventMessage) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method EventTopic not implemented")
 }
 func (*UnimplementedCoreServiceServer) mustEmbedUnimplementedCoreServiceServer() {}
 
@@ -76,6 +91,24 @@ func _CoreService_Subscribe_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CoreService_EventTopic_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EventMessage)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CoreServiceServer).EventTopic(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/control.core.v1.CoreService/EventTopic",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CoreServiceServer).EventTopic(ctx, req.(*EventMessage))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _CoreService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "control.core.v1.CoreService",
 	HandlerType: (*CoreServiceServer)(nil),
@@ -83,6 +116,10 @@ var _CoreService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Subscribe",
 			Handler:    _CoreService_Subscribe_Handler,
+		},
+		{
+			MethodName: "EventTopic",
+			Handler:    _CoreService_EventTopic_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

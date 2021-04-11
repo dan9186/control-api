@@ -52,7 +52,19 @@ func (m *SubscribeRequest) Validate() error {
 		}
 	}
 
-	// no validation rules for Name
+	if utf8.RuneCountInString(m.GetName()) < 1 {
+		return SubscribeRequestValidationError{
+			field:  "Name",
+			reason: "value length must be at least 1 runes",
+		}
+	}
+
+	if m.GetListener() == nil {
+		return SubscribeRequestValidationError{
+			field:  "Listener",
+			reason: "value is required",
+		}
+	}
 
 	if v, ok := interface{}(m.GetListener()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
@@ -205,6 +217,13 @@ func (m *Listener) Validate() error {
 		return nil
 	}
 
+	if val := m.GetPort(); val <= 2000 || val > 65353 {
+		return ListenerValidationError{
+			field:  "Port",
+			reason: "value must be inside range (2000, 65353]",
+		}
+	}
+
 	// no validation rules for Regex
 
 	return nil
@@ -263,3 +282,70 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = ListenerValidationError{}
+
+// Validate checks the field values on EventMessage with the rules defined in
+// the proto definition for this message. If any rules are violated, an error
+// is returned.
+func (m *EventMessage) Validate() error {
+	if m == nil {
+		return nil
+	}
+
+	// no validation rules for Body
+
+	return nil
+}
+
+// EventMessageValidationError is the validation error returned by
+// EventMessage.Validate if the designated constraints aren't met.
+type EventMessageValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e EventMessageValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e EventMessageValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e EventMessageValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e EventMessageValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e EventMessageValidationError) ErrorName() string { return "EventMessageValidationError" }
+
+// Error satisfies the builtin error interface
+func (e EventMessageValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sEventMessage.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = EventMessageValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = EventMessageValidationError{}
