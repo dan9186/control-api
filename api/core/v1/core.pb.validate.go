@@ -224,7 +224,7 @@ func (m *Listener) Validate() error {
 		}
 	}
 
-	// no validation rules for MathcRegex
+	// no validation rules for MatchRegex
 
 	return nil
 }

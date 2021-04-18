@@ -52,7 +52,7 @@ message Listener {
     }
   ];
 
-  string mathc_regex = 2;
+  string match_regex = 2;
 }
 
 message EventMessage {
