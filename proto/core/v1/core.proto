@@ -52,14 +52,7 @@ message Listener {
     }
   ];
 
-  oneof match {
-    Triggers triggers = 2;
-    string trigger_regex = 3;
-  }
-}
-
-message Triggers {
-  repeated string triggers = 1;
+  string mathc_regex = 2;
 }
 
 message EventMessage {
