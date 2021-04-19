@@ -57,6 +57,8 @@ message Listener {
 
 message EventMessage {
   oneof event_type {
+    option (validate.required) = true;
+
     Event event = 1;
     EventResponse response = 2;
   }

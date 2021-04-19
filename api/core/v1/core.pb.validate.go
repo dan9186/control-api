@@ -317,6 +317,12 @@ func (m *EventMessage) Validate() error {
 			}
 		}
 
+	default:
+		return EventMessageValidationError{
+			field:  "EventType",
+			reason: "value is required",
+		}
+
 	}
 
 	return nil
