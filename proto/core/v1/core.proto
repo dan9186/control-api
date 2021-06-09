@@ -5,6 +5,7 @@ package control.core.v1;
 import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
 import "validate/validate.proto";
 
 option go_package = "github.com/dan9186/control-api/api/core/v1;corepb";
@@ -56,23 +57,16 @@ message Listener {
 }
 
 message EventMessage {
-  oneof event_type {
-    option (validate.required) = true;
-
-    Event event = 1;
-    EventResponse response = 2;
-  }
-}
-
-message EventResponse {
-  string response_id = 1 [
-    (validate.rules).string.uuid = true
+  Event event = 1 [
+    (validate.rules).message.required = true
   ];
-  Event event = 2;
 }
 
 message Event {
-  map<string, string> headers = 1;
-  bytes body = 2;
-  google.protobuf.Timestamp created = 3;
+  google.protobuf.StringValue response_id = 1 [
+    (validate.rules).string.uuid = true
+  ];
+  map<string, string> headers = 2;
+  bytes body = 3;
+  google.protobuf.Timestamp created = 4;
 }
