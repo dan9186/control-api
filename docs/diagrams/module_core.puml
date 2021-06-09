@@ -1,0 +1,35 @@
+@startuml
+Core -> Core : Startup
+
+...
+
+Logger -> Core : Subscribe {regex: .*}
+Core --> Logger
+
+Danbot -> Core : Subscribe {regex: *}
+Core --> Danbot
+
+Discord -> Core : Subscribe {regex: nil}
+Core --> Discord
+
+Twitter -> Core : Subscribe {regex: nil}
+Core --> Twitter
+
+...
+
+Discord -\\ Core ++ : Event
+Core --\\ Logger
+Core --\\ Danbot --++
+Danbot -\\ Core --++: Response
+Core --\\ Logger
+Core --\\ Discord --
+
+...
+
+Twitter -\\ Core ++ : Event
+Core --\\ Logger
+Core --\\ Danbot --++
+Danbot -\\ Core --++: Response
+Core --\\ Logger
+Core --\\ Twitter --
+@enduml
