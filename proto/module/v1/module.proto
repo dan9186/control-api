@@ -9,7 +9,7 @@ import "google/protobuf/empty.proto";
 option go_package = "github.com/dan9186/control-api/api/module/v1;module_pb";
 
 
-service ModuleService {
+service Module{
   rpc EventTopic(control.core.v1.EventMessage) returns (google.protobuf.Empty) {
     option (google.api.http) = {
       post: "/module/v1/event"
