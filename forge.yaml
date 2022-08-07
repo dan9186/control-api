@@ -1,28 +1,7 @@
 project:
   name: control-api
+
 steps:
-  clean:
-    help: Clean out all the generated items
-    cmds:
-    - rm -rf api
-  commit:
-    help: Commit the generated code
-    pre:
-    - generate
-    cmds:
-    - git add api
-    - git diff --name-only --staged | grep api -q && git commit -m "generated code"
-  generate:
-    help: Generate the code from the protobufs
-    pre:
-    - clean
-    cmd: |
-      protoc \
-         -I ./proto \
-         -I $GOPATH/src/github.com/envoyproxy/protoc-gen-validate \
-         -I $GOPATH/src/github.com/googleapis/googleapis \
-         -I $GOPATH/src/github.com/protocolbuffers/protobuf/src \
-         --go_out="$GOPATH/src" \
-         --go-grpc_out="$GOPATH/src" \
-         --validate_out="lang=go:$GOPATH/src" \
-         $(find proto -type f -name '*.proto')
+  lint:
+    help: Run the linter
+    cmd: buf lint
