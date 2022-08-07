@@ -10,11 +10,17 @@ import "validate/validate.proto";
 
 option go_package = "github.com/dan9186/control-api/api/core/v1;core_pb";
 
-
 service Core {
-  rpc Subscribe(SubscribeRequest) returns (SubscribeResponse) {
+  rpc SubscribeRequestTopic(SubscribeRequestMessage) returns (google.protobuf.Empty) {
     option (google.api.http) = {
       post: "/core/v1/subscribe"
+      body: "*"
+    };
+  }
+
+  rpc UnsubscribeRequestTopic(UnsubscribeRequestMessage) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/core/v1/unsubscribe"
       body: "*"
     };
   }
@@ -27,7 +33,7 @@ service Core {
   }
 }
 
-message SubscribeRequest {
+message SubscribeRequestMessage {
   string id = 1 [
     (validate.rules).string.uuid = true
   ];
@@ -41,10 +47,6 @@ message SubscribeRequest {
   ];
 }
 
-message SubscribeResponse {
-  string subscription_id = 1;
-}
-
 message Listener {
   int32 port = 1 [
     (validate.rules).int32 = {
@@ -54,6 +56,12 @@ message Listener {
   ];
 
   string match_regex = 2;
+}
+
+message UnsubscribeRequestMessage {
+  string id = 1 [
+    (validate.rules).string.uuid = true
+  ];
 }
 
 message EventMessage {
@@ -66,7 +74,10 @@ message Event {
   google.protobuf.StringValue response_id = 1 [
     (validate.rules).string.uuid = true
   ];
+
   map<string, string> headers = 2;
+
   bytes body = 3;
+
   google.protobuf.Timestamp created = 4;
 }
