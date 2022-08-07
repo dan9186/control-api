@@ -5,3 +5,9 @@ steps:
   lint:
     help: Run the linter
     cmd: buf lint
+
+  plant:
+    help: Run the PlantUML server to work on docs
+    cmds:
+      - docker run -d -p 8080:8080 --name plantserver plantuml/plantuml-server:jetty
+      - open -a "Google Chrome" http://localhost:8080
