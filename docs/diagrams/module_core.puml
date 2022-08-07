@@ -1,35 +1,29 @@
 @startuml
+participant Core
+participant Module
+participant Vendor
+
+Module -x Core : SubscribeRequest
+
+...
+
 Core -> Core : Startup
 
 ...
 
-Logger -> Core : Subscribe {regex: .*}
-Core --> Logger
-
-Danbot -> Core : Subscribe {regex: *}
-Core --> Danbot
-
-Discord -> Core : Subscribe {regex: nil}
-Core --> Discord
-
-Twitter -> Core : Subscribe {regex: nil}
-Core --> Twitter
+group async
+Module -> Core : SubscribeRequest
+else
+Core --> Module : SubscribeResponse {status}
+end
 
 ...
 
-Discord -\\ Core ++ : Event
-Core --\\ Logger
-Core --\\ Danbot --++
-Danbot -\\ Core --++: Response
-Core --\\ Logger
-Core --\\ Discord --
-
-...
-
-Twitter -\\ Core ++ : Event
-Core --\\ Logger
-Core --\\ Danbot --++
-Danbot -\\ Core --++: Response
-Core --\\ Logger
-Core --\\ Twitter --
+loop
+	Vendor -> Module ++ : upstream event
+	Module -> Core -- : Event
+else async
+    Core -> Module : Event
+    Module -> Vendor : action
+end
 @enduml
