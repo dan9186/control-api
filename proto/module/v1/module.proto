@@ -6,7 +6,7 @@ import "core/v1/core.proto";
 import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 
-option go_package = "github.com/dan9186/control-api/api/module/v1;modulepb";
+option go_package = "github.com/dan9186/control-api/api/module/v1;module_pb";
 
 
 service ModuleService {
