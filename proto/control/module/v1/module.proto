@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package control.module.v1;
 
-import "core/v1/core.proto";
+import "control/core/v1/core.proto";
 import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 
