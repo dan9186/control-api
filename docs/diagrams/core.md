@@ -1,4 +1,4 @@
-#Subscribe
+# Subscribe
 
 ```mermaid
 sequenceDiagram
@@ -8,17 +8,15 @@ sequenceDiagram
 
     ModuleA -x Core : Subscribe request
 
-    Core ->> Core : Startup
+    Core ->> Core : startup
 
     par
         ModuleA ->> Core : control.core.v1.SubscribeReuqestTopic request
+        Core ->> Core : add module to subscriber clients
+        Core ->> ModuleA : control.module.v1.SubscribeResponseTopic response
     and
         ModuleB ->> Core : control.core.v1.SubscribeReuqestTopic request
-    end
-
-    par
-        Core ->> ModuleA : Subscribe response
-    and
-        Core ->> ModuleB : Subscribe response
+        Core ->> Core : add module to subscriber clients
+        Core ->> ModuleB : control.module.v1.SubscribeResponseTopic response
     end
 ```
